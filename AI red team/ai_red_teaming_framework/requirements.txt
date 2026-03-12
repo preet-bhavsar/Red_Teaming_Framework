@@ -1,0 +1,9 @@
+pandas==2.2.2
+requests==2.32.3
+streamlit==1.37.0
+tqdm==4.66.4
+python-dotenv==1.0.1
+
+
+
+
