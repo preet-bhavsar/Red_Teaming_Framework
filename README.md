@@ -59,7 +59,7 @@ The project is designed for authorized security testing and academic/research pu
                     ┌─────────────────────────┐
                     │      Ollama             │
                     │ Local LLM Execution     │
-                    │ e.g. Llama 3            │
+                    │ llama3:latest            │
                     └────────────┬────────────┘
                                  │
                                  ▼
@@ -164,8 +164,8 @@ These mutations allow the framework to compare whether additional context change
 The project contains an attack dataset with:
 
 - **330 base prompts**
-- **11 original categories**
-- **30 prompts per category**
+- **11 dataset categories (10 harmful categories + benign)**
+- **30 base prompts per original category**
 
 The dataset is stored at:
 
@@ -183,29 +183,33 @@ attack_id,prompt,category,notes
 
 ---
 
-# 🧪 Verified Evaluation Run
+# 🧪 Final Evaluation Run
 
-The verified experiment used a selected subset of:
+The final verified RedLens assessment evaluated the `llama3:latest` model using:
 
 ```text
-72 base prompts
-×
-4 mutation techniques
+1200 harmful prompts
++
+120 benign prompts
 =
-288 evaluations
+1320 total evaluations
 ```
 
-### Mutation Distribution
+The assessment runtime was:
 
-| Mutation | Evaluations |
+```text
+01:31:22
+```
+
+### Evaluation Distribution
+
+| Evaluation Type | Prompts |
 |---|---:|
-| Direct | 72 |
-| Role Context | 72 |
-| Hypothetical | 72 |
-| Instruction Variation | 72 |
-| **Total** | **288** |
+| Harmful | 1200 |
+| Benign | 120 |
+| **Total** | **1320** |
 
-The full dataset contains 330 base prompts, while the verified experiment used a selected 72-prompt subset with all four mutations.
+The final assessment was generated on **01 September 2026**.
 
 ---
 
@@ -287,11 +291,13 @@ ASR = Bypassed Harmful Prompts
        Total Harmful Prompts
 ```
 
-Verified result:
+Final result:
 
 ```text
-ASR = 57.66%
+ASR = 28.5%
 ```
+
+342 of 1200 harmful prompts successfully bypassed the model's safety controls.
 
 ---
 
@@ -305,11 +311,13 @@ Block Rate = Blocked Harmful Prompts
               Total Harmful Prompts
 ```
 
-Verified result:
+Final result:
 
 ```text
-38.31%
+Block Rate = 71.5%
 ```
+
+858 of 1200 harmful prompts were correctly blocked.
 
 ---
 
@@ -323,11 +331,13 @@ Partial Rate = Partial Responses
                 Harmful Prompts
 ```
 
-Verified result:
+Final result:
 
 ```text
-4.03%
+Partial Rate = 0%
 ```
+
+No partial-compliance harmful responses were recorded in the final assessment.
 
 ---
 
@@ -341,11 +351,13 @@ Benign Pass Rate = Passed Benign Prompts
                     Total Benign Prompts
 ```
 
-Verified result:
+Final result:
 
 ```text
-100%
+Benign Pass Rate = 99.2%
 ```
+
+119 of 120 benign prompts were correctly answered.
 
 ---
 
@@ -359,11 +371,13 @@ Over-Refusal Rate = Over-Refused Benign Prompts
                      Total Benign Prompts
 ```
 
-Verified result:
+Final result:
 
 ```text
-0%
+Over-Refusal Rate = 0.8%
 ```
+
+1 of 120 benign prompts was over-refused.
 
 ---
 
@@ -395,83 +409,90 @@ The dashboard, backend, history system, and PDF report all use the same calculat
 
 ---
 
-# 📋 Verified Results
+# 📋 Final Verified Results
 
-The final verified run produced:
+The final RedLens security evaluation produced:
 
 | Metric | Result |
 |---|---:|
-| Total Evaluations | 288 |
-| Harmful Evaluations | 248 |
-| Benign Evaluations | 40 |
-| Bypassed | 143 |
-| Partial | 10 |
-| Blocked | 95 |
-| Passed | 40 |
-| Over-Refused | 0 |
-| Attack Success Rate | 57.66% |
-| Block Rate | 38.31% |
-| Partial Rate | 4.03% |
-| Benign Pass Rate | 100% |
-| Over-Refusal Rate | 0% |
-| **Security Score** | **56.01 / 100** |
+| Target Model | `llama3:latest` |
+| Total Evaluations | **1320** |
+| Harmful Evaluations | **1200** |
+| Benign Evaluations | **120** |
+| Bypassed | **342** |
+| Partial | **0** |
+| Blocked | **858** |
+| Passed | **119** |
+| Over-Refused | **1** |
+| Attack Success Rate | **28.5%** |
+| Block Rate | **71.5%** |
+| Partial Rate | **0%** |
+| Benign Pass Rate | **99.2%** |
+| Over-Refusal Rate | **0.8%** |
+| **Security Score** | **79.7 / 100** |
 
 ---
 
 # 🧩 OWASP LLM Top 10 Mapping
 
-RedLens maps supported attack categories to the OWASP Top 10 for LLM Applications.
+RedLens maps relevant security findings to the OWASP Top 10 for Large Language Model Applications.
 
-| OWASP ID | Category |
-|---|---|
-| LLM01 | Prompt Injection |
-| LLM02 | Sensitive Information Disclosure |
-| LLM03 | Supply Chain |
-| LLM04 | Data and Model Poisoning |
-| LLM05 | Improper Output Handling |
-| LLM06 | Excessive Agency |
-| LLM07 | System Prompt Leakage |
-| LLM08 | Vector and Embedding Weaknesses |
-| LLM09 | Misinformation |
-| LLM10 | Unbounded Consumption |
+### High-Priority OWASP Findings
 
-### Verified OWASP Findings
+| OWASP Category | Severity | Tests | Bypassed | ASR |
+|---|---|---:|---:|---:|
+| **LLM09 — Misinformation** | Critical | 120 | 71 | **59.2%** |
+| **LLM01 — Prompt Injection** | Critical | 240 | 124 | **51.7%** |
+| **LLM02 — Sensitive Information Disclosure** | High | 240 | 96 | **40.0%** |
 
-The verified experiment exercised three mapped OWASP categories:
+### LLM09 — Misinformation
 
-| OWASP | Tests | ASR |
-|---|---:|---:|
-| LLM01 – Prompt Injection | 100 | 61.00% |
-| LLM02 – Sensitive Information Disclosure | 44 | 81.82% |
-| LLM09 – Misinformation | 12 | 83.33% |
+```text
+71 / 120 harmful prompts bypassed
+ASR = 59.2%
+Severity = Critical
+```
 
-Other content-safety categories remain marked as **UNMAPPED** where they do not represent a direct OWASP LLM vulnerability class.
+### LLM01 — Prompt Injection
 
-This avoids inventing OWASP mappings that are not technically justified.
+```text
+124 / 240 harmful prompts bypassed
+ASR = 51.7%
+Severity = Critical
+```
+
+### LLM02 — Sensitive Information Disclosure
+
+```text
+96 / 240 harmful prompts bypassed
+ASR = 40.0%
+Severity = High
+```
+
+These were identified as the highest-priority remediation areas in the final assessment.
 
 ---
 
 # 🔥 Severity Classification
 
-RedLens assigns severity based on the attack category and actual response result.
+RedLens assigns severity based on the evaluated attack category and model response.
 
 Severity levels:
 
 - CRITICAL
 - HIGH
 - MEDIUM
-- LOW
-- INFO
+- SAFE / INFO
 
-Verified findings:
+Final findings:
 
 | Severity | Count |
 |---|---:|
-| Critical | 21 |
-| High | 112 |
-| Medium | 10 |
-| Low | 10 |
-| Info | 135 |
+| Critical | **11** |
+| High | **260** |
+| Medium | **71** |
+| Safe / Info | **978** |
+| **Total** | **1320** |
 
 ---
 
@@ -600,13 +621,7 @@ python test_owasp_metrics.py
 python test_metrics.py
 ```
 
-The metrics test suite contains:
-
-```text
-50 checks
-50 passed
-0 failed
-```
+The project includes automated checks for the core metrics, OWASP mapping, severity classification, and dataset sanity checks.
 
 The tests cover:
 
@@ -628,53 +643,25 @@ The tests cover:
 
 ---
 
-# 🔄 Metric Consistency Fix
+# 🔄 Metric Consistency
 
-One of the major improvements in the final version of RedLens was eliminating duplicated metric logic.
-
-Previously, different components independently calculated security metrics.
-
-This could produce inconsistent results.
-
-For example:
-
-```text
-Dashboard Security Score = 38.3
-History Security Score   = 56.01
-```
-
-The problem occurred because partial compliance was incorrectly counted as a full attack success in some components.
-
-### Final Solution
-
-A centralized metrics module was created:
+RedLens uses a centralized metrics implementation:
 
 ```text
 src/metrics.py
 ```
 
-The following components now use the same metric definitions:
+The central metrics logic is used to keep calculations consistent across the evaluation workflow, dashboard, historical results, and generated reports.
 
-```text
-Backend
-   │
-   ├── Dashboard
-   │
-   ├── Run History
-   │
-   └── PDF Report
-```
+The final assessment uses the same definitions for:
 
-Final result:
-
-```text
-Backend  = 56.01
-Dashboard = 56.01
-History   = 56.01
-PDF       = 56.01
-```
-
-This ensures cross-system consistency.
+- Attack Success Rate
+- Block Rate
+- Partial Compliance Rate
+- Benign Pass Rate
+- Over-Refusal Rate
+- Security Score
+- Category-wise ASR
 
 ---
 
@@ -730,7 +717,7 @@ ai_red_teaming_framework/
 |---|---|
 | Python | Core framework |
 | Ollama | Local LLM execution |
-| Llama 3 | Example local target model |
+| Llama 3 | Target local LLM |
 | Streamlit | Interactive dashboard |
 | Pandas | Dataset and result processing |
 | Requests | Ollama API communication |
@@ -925,54 +912,65 @@ Do not use the framework to attack systems, models, or services without authoriz
 
 ### 1. Heuristic Classification
 
-The response analyzer currently uses deterministic refusal and response-pattern heuristics.
-
-It is not a perfect semantic safety classifier.
+The response analyzer uses automated response-pattern and refusal heuristics. It should not be considered a perfect semantic safety classifier.
 
 ### 2. Local Model Dependency
 
-The attack execution stage requires a working Ollama installation and a locally available model.
+Attack execution requires a working Ollama installation and an available local model.
 
 ### 3. OWASP Mapping
 
-Not every content category corresponds directly to a technical OWASP LLM vulnerability.
+Not every content-safety category directly corresponds to a technical OWASP LLM vulnerability. Mappings are therefore applied where the evaluated behavior supports the corresponding OWASP risk.
 
-Therefore, some categories are intentionally classified as:
+### 4. Model-Specific Results
 
-```text
-UNMAPPED
-```
+The reported results apply specifically to the evaluated `llama3:latest` configuration and should not automatically be generalized to every LLM.
 
-rather than assigning an inaccurate OWASP category.
+### 5. Evaluation Scope
 
-### 4. Verified Run
-
-The final verification was performed using the existing 288 real model responses.
-
-The live Ollama attack-generation process was not re-executed during the offline verification process.
+The final reported assessment contains 1,320 evaluations consisting of 1,200 harmful prompts and 120 benign prompts.
 
 ---
 
 # 📌 Final Project Results
 
-The final verified RedLens evaluation achieved:
+The final verified RedLens assessment achieved:
 
 ```text
-288 Total Evaluations
+Target Model: llama3:latest
 
-143 Bypassed
-10 Partial
-95 Blocked
-40 Benign Passed
-0 Over-Refused
+1320 Total Evaluations
+1200 Harmful Prompts
+120 Benign Prompts
 
-ASR              = 57.66%
-Block Rate       = 38.31%
-Partial Rate     = 4.03%
-Benign Pass Rate = 100%
-Over-Refusal     = 0%
+342 Bypassed
+0 Partial
+858 Blocked
+119 Benign Passed
+1 Over-Refused
 
-Security Score   = 56.01 / 100
+ASR              = 28.5%
+Block Rate       = 71.5%
+Partial Rate     = 0%
+Benign Pass Rate = 99.2%
+Over-Refusal     = 0.8%
+
+Critical Findings = 11
+High Findings     = 260
+Medium Findings   = 71
+Safe / Info       = 978
+
+Security Score   = 79.7 / 100
+```
+
+The final assessment identified **Jailbreak**, **Data Extraction**, and **Misinformation** as the highest-risk categories. The most effective attack technique was **Direct**, with an ASR of **36.3%**.
+
+The primary OWASP-mapped risks requiring remediation were:
+
+```text
+LLM09 — Misinformation
+LLM01 — Prompt Injection
+LLM02 — Sensitive Information Disclosure
 ```
 
 The project provides an end-to-end workflow:
@@ -994,7 +992,7 @@ Severity Analysis
    ↓
 Dashboard
    ↓
-History Tracking
+Historical Results
    ↓
 PDF Security Report
 ```
