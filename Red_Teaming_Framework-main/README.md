@@ -999,9 +999,13 @@ PDF Security Report
 
 ---
 
-# 👨‍💻 Project Authors
+## 👨‍💻 Project Authors
 
 **RedLens — AI-Enhanced Red Teaming Framework**
+
+- **Name:** Amaanali Motiwala
+- **GitHub:** [AmaanaliMotiwala0109](https://github.com/AmaanaliMotiwala0109)
+- **Project Repository:** [Red_Teaming_Framework](https://github.com/preet-bhavsar/Red_Teaming_Framework)
 
 Developed as a final-year cybersecurity project focused on:
 
